@@ -63,13 +63,13 @@ lazy val utest = crossProject(JSPlatform, JVMPlatform)
   .jsSettings(
     libraryDependencies ++= Seq(
       "org.scala-js" %% "scalajs-test-interface" % scalaJSVersion,
-      "org.portable-scala" %%% "portable-scala-reflect" % "0.1.0"
+      "org.portable-scala" %%% "portable-scala-reflect" % "0.1.1"
     )
   )
   .jvmSettings(
     libraryDependencies ++= Seq(
       "org.scala-sbt" % "test-interface" % "1.0",
-      "org.portable-scala" %%% "portable-scala-reflect" % "0.1.0"
+      "org.portable-scala" %%% "portable-scala-reflect" % "0.1.1"
     ),
     resolvers += Resolver.sonatypeRepo("snapshots")
   )
