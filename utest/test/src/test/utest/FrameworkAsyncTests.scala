@@ -9,13 +9,13 @@ object FrameworkAsyncTests extends TestSuite {
   private val isNative = sys.props("java.vm.name") == "Scala Native"
 
   def tests = Tests {
-    test("hello") {
+    "hello" -  {
       Future(10)
     }
 
-    test("asyncFailures") {
+    "asyncFailures" -  {
       val tests = Tests {
-        test("testSuccessAsync"){
+        "testSuccessAsync" - {
           val p = concurrent.Promise[Int]
           _root_.test.utest.Scheduler.scheduleOnce(2.seconds)(p.success(123))
 
@@ -26,7 +26,7 @@ object FrameworkAsyncTests extends TestSuite {
 
           p.future
         }
-        test("testFailAsync"){
+        "testFailAsync" - {
           val p = concurrent.Promise[Int]
           _root_.test.utest.Scheduler.scheduleOnce(2.seconds)(p.failure(new Exception("Boom")))
 
@@ -37,28 +37,28 @@ object FrameworkAsyncTests extends TestSuite {
 
           p.future
         }
-        test("testSuccess"){
+        "testSuccess" - {
           Future {
             assert(true)
           }
         }
-        test("testFail"){
+        "testFail" - {
           Future {
             assert(false)
           }
         }
-        test("normalSuccess"){
+        "normalSuccess" - {
           assert(true)
         }
-        test("normalFail"){
+        "normalFail" - {
           assert(false)
         }
-        test("testFailUnexpected"){
+        "testFailUnexpected" - {
           Future {
             throw new Exception("Lols boom")
           }
         }
-        test("testCastError"){
+        "testCastError" - {
           // These are Fatal in Scala.JS. Ensure they're handled else they freeze SBT.
           Future {
             // This test is disabled until scala-native/scala-native#858 is not fixed.

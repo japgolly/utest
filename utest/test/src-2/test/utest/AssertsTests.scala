@@ -5,11 +5,11 @@ object AssertsTestsVersionSpecific extends utest.TestSuite{
 
 
   def tests = Tests{
-    test("compileError"){
-      test("failure"){
+    "compileError" - {
+      "failure" - {
         // Use compileError to check itself to verify that when it
         // doesn't throw an error, it actually does (super meta!)
-        * - compileError("""
+        "*" - compileError("""
             compileError("1 + 1").check(
               ""
             )
@@ -20,7 +20,7 @@ object AssertsTestsVersionSpecific extends utest.TestSuite{
           """,
           "compileError check failed to have a compilation error"
         )
-        * - compileError("""
+        "*" - compileError("""
             val x = 0
             compileError("x + x").check(
             ""
@@ -32,7 +32,7 @@ object AssertsTestsVersionSpecific extends utest.TestSuite{
           """,
           "compileError check failed to have a compilation error"
         )
-        * - compileError("""
+        "*" - compileError("""
             compileError("1" * 2).check(
               ""
             )
@@ -45,7 +45,7 @@ object AssertsTestsVersionSpecific extends utest.TestSuite{
         )
 
       }
-      test("compileTimeOnly"){
+      "compileTimeOnly" - {
         // Make sure that when the body contains a `@compileTimeOnly`, it
         // gets counted as a valid compile error and `compileError` passes
         compileError("compileTimeOnlyVal").check(

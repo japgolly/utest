@@ -19,7 +19,7 @@ object AfterEachOnFailureTest extends TestSuite {
   }
 
   val tests = Tests{
-    test("testFails") {
+    "testFails" -  {
       val innerTests = Tests{
         throw new java.lang.AssertionError("Fail")
       }
@@ -31,7 +31,7 @@ object AfterEachOnFailureTest extends TestSuite {
       }
     }
   }
-  
+
   private class SomeResource{
     var isClosed:Boolean = false
     def close(): Unit = isClosed = true

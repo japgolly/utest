@@ -9,7 +9,7 @@ object DisablePrintTests extends utest.TestSuite{
   }
 
   def tests = Tests{
-    test("hello"){
+    "hello" - {
       123
     }
   }

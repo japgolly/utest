@@ -13,13 +13,13 @@ object AssertsTests extends utest.TestSuite{
 
 
   def tests = Tests{
-    test("assert"){
-      test("success"){
+    "assert" - {
+      "success" - {
         def f(x: Boolean) = x
         assert(f(true))
         "success!"
       }
-      test("failure"){
+      "failure" - {
         val (e, logged, cause) = try {
           val x = 1
           val y = "2"
@@ -34,14 +34,14 @@ object AssertsTests extends utest.TestSuite{
           (e, logged, cause)
         }
         val expected = Seq(utest.TestValue("x", "Int", 1), TestValue("y", "String", "2"))
-        test{
+        "*" - {
           Predef.assert(
             cause == null,
             "cause should be null for boolean failure"
           )
         }
 
-        test{
+        "*" - {
           Predef.assert(
             logged == expected,
             "Logging didn't capture the locals properly " + logged
@@ -49,21 +49,21 @@ object AssertsTests extends utest.TestSuite{
           "hello" // make sure this works
         }
 
-        test{
+        "*" - {
           Predef.assert(
             e.toString.contains("y: String = 2") && e.toString.contains("x: Int = 1"),
             "Logging doesn't display local values properly " + e.toString
           )
         }
 
-        test{
+        "*" - {
           Predef.assert(
             e.toString.contains("x.toString == y"),
             "Message didnt contain source text " + e.toString
           )
         }
       }
-      test("failureWithException"){
+      "failureWithException" - {
         try {
           assert(Iterator.empty.next() == 10)
           Predef.assert(false)
@@ -74,7 +74,7 @@ object AssertsTests extends utest.TestSuite{
         }
       }
 
-      test("tracingOnFailure"){
+      "tracingOnFailure" - {
         try {
           val a = "i am cow"
           val b = 31337
@@ -86,7 +86,7 @@ object AssertsTests extends utest.TestSuite{
           e.getMessage.contains("98")
         }
       }
-      test("multiple"){
+      "multiple" - {
         def die = throw new IllegalArgumentException("foo")
         val msg1 = try {
           assert(
@@ -111,7 +111,7 @@ object AssertsTests extends utest.TestSuite{
         Predef.assert(msg2.contains("foo"))
         Predef.assert(msg2.contains("#2: die"))
       }
-      test("show"){
+      "show" - {
         try assert((math.max(1 + 1, 2): @Show) == 3) catch{
           case utest.AssertionError(
             _,
@@ -122,7 +122,7 @@ object AssertsTests extends utest.TestSuite{
         }
       }
     }
-    test("arrowAssert"){
+    "arrowAssert" - {
       1 ==> 1 // passes
       Array(1, 2, 3) ==> Array(1, 2, 3) // passes
       try{
@@ -131,15 +131,15 @@ object AssertsTests extends utest.TestSuite{
         e
       }
     }
-    test("intercept"){
-      test("success"){
+    "intercept" - {
+      "success" - {
         val e = intercept[MatchError]{
           (0: Any) match { case _: String => }
         }
         Predef.assert(e.toString.contains("MatchError"))
         e.toString
       }
-      test("failureWrongException"){
+      "failureWrongException" - {
         try {
           val x = 1
           val y = 2.0
@@ -157,7 +157,7 @@ object AssertsTests extends utest.TestSuite{
           e.getMessage
         }
       }
-      test("failureNoThrow"){
+      "failureNoThrow" - {
         try{
           val x = 1
           val y = 2.0
@@ -170,21 +170,21 @@ object AssertsTests extends utest.TestSuite{
           e.getMessage
         }
       }
-      test("interceptWithAssignment"){
+      "interceptWithAssignment" - {
         var W = 1
         try utest.intercept[Exception] { W = 2 }
         catch{case e: utest.AssertionError => e.getMessage}
       }
     }
 
-    test("assertMatch"){
-      test("success"){
+    "assertMatch" - {
+      "success" - {
         val thing = Seq(1, 2, 3)
         assertMatch(thing){case Seq(1, _, 3) =>}
         ()
       }
 
-      test("failure"){
+      "failure" - {
         try {
           val x = 1
           val iAmCow = Seq("2.0")
@@ -205,7 +205,7 @@ object AssertsTests extends utest.TestSuite{
         }
       }
 
-      test("failureWithException"){
+      "failureWithException" - {
         try {
           val a = Iterator.empty
           val b = 2
@@ -222,33 +222,33 @@ object AssertsTests extends utest.TestSuite{
         }
       }
     }
-    test("compileError"){
-      test("success"){
+    "compileError" - {
+      "success" - {
         // Make sure that on successfully catching a compilation
         // error, the error it reports is in the correct place for
         // a variety of inputs
         val qq = "\"" * 3
-        test - compileError("1 + abc").check(
+        "*" - compileError("1 + abc").check(
           if (isDotty) """|1 + abc
                           |    ^  """.stripMargin
           else """
-        test - compileError("1 + abc").check(
-                                 ^
+        "*" - compileError("1 + abc").check(
+                                ^
           """,
           if (isDotty) "Not found: abc"
           else "not found: value abc"
         )
-        test - compileError(""" 1 + abc""").check(
+        "*" - compileError(""" 1 + abc""").check(
           if (isDotty) """ 1 + abc
                          |     ^""".stripMargin
           else s"""
-        test - compileError($qq 1 + abc$qq).check(
-                                    ^
+        "*" - compileError($qq 1 + abc$qq).check(
+                                   ^
           """,
           if (isDotty) "Not found: abc"
           else "not found: value abc"
         )
-        test - compileError("""
+        "*" - compileError("""
             1 + abc
           """).check(
           if (isDotty) """
@@ -261,7 +261,7 @@ object AssertsTests extends utest.TestSuite{
           if (isDotty) "Not found: abc"
           else "not found: value abc"
         )
-        test - compileError("""
+        "*" - compileError("""
 
 
 
@@ -281,27 +281,27 @@ object AssertsTests extends utest.TestSuite{
           if (isDotty) "Not found: abc"
           else "not found: value abc"
         )
-        test - compileError("true * false").check(
+        "*" - compileError("true * false").check(
           if (isDotty) """true * false
                          |     ^""".stripMargin
           else """
-        test - compileError("true * false").check(
-                                  ^
+        "*" - compileError("true * false").check(
+                                 ^
           """,
           "value * is not a member of Boolean"
         )
         // need to work around inability to use """ in string
 
-        test - compileError(""" true * false""").check(
+        "*" - compileError(""" true * false""").check(
           if (isDotty) """ true * false
                          |      ^""".stripMargin
           else s"""
-        test - compileError($qq true * false$qq).check(
-                                     ^
+        "*" - compileError($qq true * false$qq).check(
+                                    ^
           """,
           "value * is not a member of Boolean"
         )
-        test - compileError("ab ( cd }").check(
+        "*" - compileError("ab ( cd }").check(
           """""",
           if (isDotty) "')' expected, but eof found"
           else "')' expected but '}' found."
