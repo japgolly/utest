@@ -49,6 +49,10 @@ object Lib {
         </scm>
         <developers>
           <developer>
+            <id>lihaoyi</id>
+            <name>Li Haoyi</name>
+          </developer>
+          <developer>
             <id>japgolly</id>
             <name>David Barri</name>
           </developer>

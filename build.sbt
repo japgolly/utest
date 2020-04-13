@@ -1,5 +1,5 @@
 import sbtcrossproject.{crossProject, CrossType}
-import com.typesafe.sbt.pgp.PgpKeys._
+import com.typesafe.sbt.pgp.PgpKeys
 import sbt.Keys.scalacOptions
 import sbt.addCompilerPlugin
 import sbt.librarymanagement.{SemanticSelector, VersionNumber}
@@ -33,32 +33,12 @@ lazy val utest = crossProject(JSPlatform, JVMPlatform)
 
     testFrameworks += new TestFramework("test.utest.CustomFramework"),
 
-    // Release settings
-    publishArtifact in Test := false,
-    publishTo := {
-      val nexus = "https://oss.sonatype.org/"
-      if (isSnapshot.value)
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-    },
-    homepage := Some(url("https://github.com/japgolly/utest")),
-    scmInfo := Some(ScmInfo(
-      browseUrl = url("https://github.com/japgolly/utest"),
-      connection = "scm:git:git@github.com:japgolly/utest.git"
-    )),
-    licenses := Seq("MIT" -> url("http://www.opensource.org/licenses/mit-license.html")),
-    developers += Developer(
-      email = "haoyi.sg@gmail.com",
-      id = "lihaoyi",
-      name = "Li Haoyi",
-      url = url("https://github.com/lihaoyi")
-    )//,
-//    autoCompilerPlugins := true,
-//
-//    addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7"),
-//
-//    scalacOptions += "-P:acyclic:force"
+    homepage                      := Some(url("https://github.com/japgolly/utest")),
+    licenses                      += ("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0")),
+    publishArtifact in Test       := false,
+    releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+    releaseTagComment             := s"v${(version in ThisBuild).value}",
+    releaseVcsSign                := true
 
 )
   .configureCross(publicationSettings("utest"))
