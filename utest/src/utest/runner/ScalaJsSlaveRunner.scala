@@ -22,6 +22,8 @@ final class ScalaJsSlaveRunner(args: Array[String],
   def incSuccess() = send(s"is")
   def incFailure() = send(s"if")
 
+  override def logDuration(ms: Long, name: Array[String]) = send("d" + ms + "|" + name.mkString("."))
+
   // These only exist because Scala.js is weird and asks us to define them
   // even though we never end up using them, so stub them out
   def done() = {

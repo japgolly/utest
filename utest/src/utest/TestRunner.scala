@@ -12,12 +12,16 @@ import scala.util.{Failure, Success}
   */
 object TestRunner {
   def renderResults(results: Seq[(String, HTree[String, Result])],
+                    durations: List[DurationAndName],
+                    reportSlowest: Option[Int],
                     formatter: Formatter = Formatter,
                     showSummaryThreshold: Int = 30,
                     resultsHeader: String = DefaultFormatters.resultsHeader,
                     failureHeader: String = DefaultFormatters.failureHeader): (ufansi.Str, Int, Int) = {
 
-    val (successes, failures) = results.flatMap(_._2.leaves).partition(_.value.isSuccess)
+    val (successesI, failuresI) = results.iterator.flatMap(_._2.leaves).partition(_.value.isSuccess)
+    val successes = successesI.toArray
+    val failures  = failuresI.toArray
 
     val formatted = DefaultFormatters.formatSummary(
       resultsHeader,
@@ -36,9 +40,11 @@ object TestRunner {
         } yield str
         ufansi.Str.join(frags:_*)
       },
-      successes.length,
-      failures.length,
-      showSummaryThreshold
+      successCount = successes.length,
+      failureCount = failures.length,
+      durations = durations,
+      reportSlowest = reportSlowest,
+      showSummaryThreshold = showSummaryThreshold
     )
     (formatted, successes.length, failures.length)
   }

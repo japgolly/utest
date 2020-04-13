@@ -1,10 +1,11 @@
 package utest
 package runner
+
 //import acyclic.file
 import sbt.testing._
-
 import scala.util.Failure
-import utest.framework.{StackMarker, Tree}
+import utest.framework.{ArgParse, StackMarker, Tree}
+
 object BaseRunner{
   /**
     * Checks whether the given query needs the TestSuite at testSuitePath
@@ -57,6 +58,7 @@ abstract class BaseRunner(val args: Array[String],
   def addFailure(r: String): Unit
   def incSuccess(): Unit
   def incFailure(): Unit
+  def logDuration(ms: Long, name: Array[String]): Unit
 
   def tasks(taskDefs: Array[TaskDef]) = {
     val allPaths = query.flatMap(_.leafPaths)
@@ -74,6 +76,9 @@ abstract class BaseRunner(val args: Array[String],
       if BaseRunner.checkOverlap(query, taskDef.fullyQualifiedName().split('.'))
     } yield makeTask(taskDef)
   }
+
+  val reportSlowest: Option[Int] =
+    ArgParse.find("--report-slowest", s => Some(s.toInt), None, Some(20))(args).filter(_ > 0)
 
   def runSuite(loggers: Seq[Logger],
                suiteName: String,
@@ -147,7 +152,13 @@ abstract class BaseRunner(val args: Array[String],
         val results = TestRunner.runAsync(
           suite.tests,
           (subpath, result) => {
-            val str = suiteFormatter.formatSingle(suiteName.split('.') ++ subpath, result)
+            val selectorAndSubpath = suiteName.split('.') ++ subpath
+            val str = suiteFormatter.formatSingle(selectorAndSubpath, result)
+
+            if (reportSlowest.isDefined) {
+              val fullName = selectorAndSubpath :+ result.name
+              logDuration(result.milliDuration, fullName)
+            }
 
             str.foreach(s => log(s.render))
 

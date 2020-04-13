@@ -1,11 +1,14 @@
 package utest
 package runner
+
 //import acyclic.file
 import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
-
-import utest.framework.DefaultFormatters
-
+import utest.framework.{DefaultFormatters, DurationAndName}
 import scala.annotation.tailrec
+
+object MasterRunner {
+  val DurAndName = "^.(\\d+?)\\|(.*)$".r
+}
 
 final class MasterRunner(args: Array[String],
                          remoteArgs: Array[String],
@@ -19,12 +22,24 @@ final class MasterRunner(args: Array[String],
                          useSbtLoggers: Boolean,
                          formatter: utest.framework.Formatter)
                          extends BaseRunner(args, remoteArgs, testClassLoader, useSbtLoggers, formatter, Some(startHeader)){
+  import MasterRunner._
 
   setup()
   val summaryOutputLines = new AtomicReference[List[String]](Nil)
   val success = new AtomicInteger(0)
   val failure = new AtomicInteger(0)
   val failureOutputLines = new AtomicReference[List[String]](Nil)
+
+  val durations = new AtomicReference[List[DurationAndName]](Nil)
+
+  override def logDuration(ms: Long, name: Array[String]): Unit = {
+    val r = DurationAndName(ms, name)
+    @tailrec def go(): Unit = {
+      val old = durations.get()
+      if (!durations.compareAndSet(old, r :: old)) go()
+    }
+    go()
+  }
 
   @tailrec def addResult(r: String): Unit = {
     val old = summaryOutputLines.get()
@@ -58,6 +73,8 @@ final class MasterRunner(args: Array[String],
           ),
         successCount = success.get(),
         failureCount = failure.get(),
+        durations = durations.get(),
+        reportSlowest = reportSlowest,
         showSummaryThreshold = showSummaryThreshold
       )
       if (useSbtLoggers) {
@@ -88,6 +105,13 @@ final class MasterRunner(args: Array[String],
       case 'i' => msg(1) match {
         case 's' => incSuccess()
         case 'f' => incFailure()
+        case _ => badMessage
+      }
+      case 'd' => msg match {
+        case DurAndName(ms, name) =>
+          val a = new Array[String](1)
+          a(0) = name
+          logDuration(ms.toLong, a)
         case _ => badMessage
       }
       case _ => badMessage
