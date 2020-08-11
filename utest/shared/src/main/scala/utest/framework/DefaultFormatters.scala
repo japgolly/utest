@@ -14,13 +14,17 @@ object DefaultFormatters{
                     showSummaryThreshold: Int): ufansi.Str = {
 
     val totalCount = successCount + failureCount
-    val summary: ufansi.Str =
+
+    var summary: ufansi.Str =
       if (totalCount < showSummaryThreshold) ""
       else ufansi.Str.join(
         resultsHeader, "\n",
         body, "\n",
         failureMsg, "\n"
       )
+
+    if (reportSlowest.isDefined || summary.plainText.length > 60000)
+      summary = ""
 
     var output =
       ufansi.Str.join(
