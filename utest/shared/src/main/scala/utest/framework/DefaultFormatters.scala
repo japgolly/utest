@@ -23,8 +23,8 @@ object DefaultFormatters{
         failureMsg, "\n"
       )
 
-    if (reportSlowest.isDefined || summary.plainText.length > 60000)
-      summary = ""
+    if (reportSlowest.isDefined || summary.plainText.getBytes("UTF-8").length > 30000)
+      summary = "\n"
 
     var output =
       ufansi.Str.join(
