@@ -143,7 +143,7 @@ object FrameworkTests extends utest.TestSuite{
         results.leaves.map(_.value.get)
       }
       "onlyLastThingReturns" - {
-        val tests = TestSuite {
+        val tests = Tests {
           12 + 2
           "omg" - {
           }
@@ -156,7 +156,7 @@ object FrameworkTests extends utest.TestSuite{
     "nesting" - {
       "importStatementsWork" - {
         // issue #7, just needs to compile
-        val tests = TestSuite {
+        val tests = Tests {
           import math._
           "omg" - {
           }

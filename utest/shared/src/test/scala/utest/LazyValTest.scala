@@ -7,7 +7,7 @@ object What {
 }
 
 object LazyValTest extends TestSuite {
-  override def tests = TestSuite {
+  override def tests = Tests {
     import What._
     lazy val subj = imported
     "test" - {
