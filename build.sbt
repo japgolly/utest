@@ -5,13 +5,12 @@ import sbt.addCompilerPlugin
 import sbt.librarymanagement.{SemanticSelector, VersionNumber}
 import Lib._
 
-val scala212 = "2.12.11"
-val scala213 = "2.13.1"
+val scala213 = "2.13.3"
 
 name               in ThisBuild := "utest"
 organization       in ThisBuild := "com.github.japgolly.fork"
 scalaVersion       in ThisBuild := scala213
-crossScalaVersions in ThisBuild := Seq(scala212, scala213)
+crossScalaVersions in ThisBuild := Seq(scala213)
 updateOptions      in ThisBuild := (updateOptions in ThisBuild).value.withCachedResolution(true)
 incOptions         in ThisBuild := (incOptions in ThisBuild).value.withLogRecompileOnMacro(false)
 
